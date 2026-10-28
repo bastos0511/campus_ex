@@ -8,7 +8,8 @@ import jakarta.validation.constraints.Size;
 
 // Asks to move a ticket to a new status.
 // rating/feedback: optional, only when closing (CERRADA).
-// comment: reason; required when the requester reopens (RESUELTA -> EN_PROCESO).
+// comment: reason; required when the requester reopens (RESUELTA -> EN_PROCESO)
+// or cancels (ABIERTA/ASIGNADA -> CANCELADA, max 500 characters).
 public record StatusChangeRequest(
     @NotNull(message = "Debe indicar el nuevo estado")
     TicketStatus status,

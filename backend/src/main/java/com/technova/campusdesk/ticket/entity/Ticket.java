@@ -78,6 +78,10 @@ public class Ticket {
   @Column(name = "feedback", length = 500)
   private String feedback;
 
+  // Requester's reason, only set when cancelling.
+  @Column(name = "cancel_reason", length = 500)
+  private String cancelReason;
+
   public Ticket() {
     // Empty constructor required by JPA.
   }
@@ -100,7 +104,7 @@ public class Ticket {
   // True while the ticket is still being worked on and its deadline passed.
   public boolean isOverdue() {
     return dueAt != null && Instant.now().isAfter(dueAt)
-        && status != TicketStatus.RESUELTA && status != TicketStatus.CERRADA;
+        && status != TicketStatus.RESUELTA && !status.isFinal();
   }
 
   // Refreshes the date every time the ticket changes.
@@ -131,4 +135,6 @@ public class Ticket {
   public void setRating(Short rating) { this.rating = rating; }
   public String getFeedback() { return feedback; }
   public void setFeedback(String feedback) { this.feedback = feedback; }
+  public String getCancelReason() { return cancelReason; }
+  public void setCancelReason(String cancelReason) { this.cancelReason = cancelReason; }
 }

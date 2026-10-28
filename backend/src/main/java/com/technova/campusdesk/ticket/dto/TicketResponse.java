@@ -9,6 +9,7 @@ import java.time.Instant;
 
 // Full ticket view (technician may be empty).
 // dueAt/overdue: SLA. rating/feedback: only on CERRADA tickets that were rated.
+// cancelReason: only on CANCELADA tickets.
 public record TicketResponse(
     Long id,
     String title,
@@ -23,7 +24,8 @@ public record TicketResponse(
     Instant dueAt,
     boolean overdue,
     Integer rating,
-    String feedback) {
+    String feedback,
+    String cancelReason) {
 
   // Converts the entity into a response.
   public static TicketResponse from(Ticket ticket) {
@@ -34,6 +36,6 @@ public record TicketResponse(
         ticket.getCreatedAt(), ticket.getUpdatedAt(),
         ticket.getDueAt(), ticket.isOverdue(),
         ticket.getRating() == null ? null : ticket.getRating().intValue(),
-        ticket.getFeedback());
+        ticket.getFeedback(), ticket.getCancelReason());
   }
 }

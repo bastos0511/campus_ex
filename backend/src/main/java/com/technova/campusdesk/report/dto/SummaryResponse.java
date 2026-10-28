@@ -7,5 +7,6 @@ public record SummaryResponse(
     long asignadas,
     long enProceso,
     long resueltas,
-    long cerradas) {
+    long cerradas,
+    long canceladas) {
 }

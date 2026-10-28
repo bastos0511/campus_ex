@@ -4,7 +4,7 @@ Help-desk REST API. The frontend (`../`) consumes it with `fetch()`.
 
 ## Requirements
 
-- JDK 17+ and Maven 3.9+
+- JDK 21+ and Maven 3.9+
 - PostgreSQL 14+ with schema and data from `../database/` (`schema.sql` + `seed.sql`)
 
 ```sql
@@ -68,11 +68,13 @@ mvnw.cmd spring-boot:run
 - Only `ADMIN` assigns/reassigns, on `ABIERTA` or `ASIGNADA` tickets, to a `TECHNICIAN`.
 - Assigned technician: `ASIGNADA → EN_PROCESO → RESUELTA`. Requester: `RESUELTA → CERRADA`
   (optional `rating` 1-5 and `feedback`) or reopen `RESUELTA → EN_PROCESO` (required `comment`).
-- SLA: `dueAt` = creation + priority hours (4/24/72/120). `overdue` while not RESUELTA/CERRADA.
+- Requester only: cancel `ABIERTA`/`ASIGNADA → CANCELADA` (required `comment`, 5-500 chars,
+  saved in `cancelReason`).
+- SLA: `dueAt` = creation + priority hours (4/24/72/120). `overdue` while not RESUELTA/CERRADA/CANCELADA.
 - `RESUELTA` tickets are auto-closed after `AUTO_CLOSE_DAYS` (default 7) by `AutoCloseJob`.
 - Internal comments (`internal: true`): only TECHNICIAN/ADMIN write or read them.
 - Only the requester edits, on `ABIERTA` tickets with no technician.
-- `CERRADA` is final and accepts no comments.
+- `CERRADA` and `CANCELADA` are final and accept no comments.
 - `GET /api/tickets/search` → paged results with `q` (text or `#id`) and `overdue` filters.
 - Uniform JSON errors: 400 data, 401 no token, 403 no permission, 404 missing,
   409 business rule, 500 unexpected. No stack traces or secrets.

@@ -16,13 +16,13 @@ change history, roles and JWT authentication.
 ## Technologies
 
 - **Frontend:** HTML5, CSS3, Vanilla JavaScript (`fetch()` + `async/await`).
-- **Backend:** Java 17, Spring Boot 3.3, Spring Data JPA, Spring Security + JWT,
+- **Backend:** Java 21, Spring Boot 3.3, Spring Data JPA, Spring Security + JWT,
   Bean Validation, Swagger (springdoc).
 - **Database:** PostgreSQL 14+.
 
 ## Requirements
 
-- JDK 17+ (probado con Java 21)
+- JDK 21+
 - PostgreSQL 14+ (local o Docker)
 - Maven **no** necesita instalación global: el proyecto incluye Maven Wrapper (`backend/mvnw.cmd`)
 - Un servidor estático para el frontend (p. ej. `python -m http.server 5500` o Live Server de VS Code)
@@ -137,6 +137,7 @@ yours locally (see "Local credentials" below).
 | **Calificación al cerrar** | `PATCH /status` `{ "status": "CERRADA", "rating": 1-5, "feedback": "..." }` (ambos opcionales). Se guarda en el mismo UPDATE que cierra, porque el trigger bloquea cambios en tickets `CERRADA`. | Botón "Cerrar y calificar" con estrellas y comentario. El detalle muestra la calificación. |
 | **Notas internas** | `POST /comments` `{ "content": "...", "internal": true }`, solo `TECHNICIAN`/`ADMIN`. Un `USER` nunca las recibe. | Casilla "Nota interna" (solo personal). Las notas se ven con borde punteado y etiqueta. |
 | **SLA (fecha límite)** | `due_at = created_at + horas de la prioridad` (CRITICA 4 h, ALTA 24 h, MEDIA 72 h, BAJA 120 h). Se recalcula si se edita la prioridad. La respuesta incluye `dueAt` y `overdue`. | Etiqueta "Vencido" en las tarjetas (listado y dashboard) y fecha límite en el detalle. |
+| **Cancelar ticket** | El solicitante pasa `ABIERTA`/`ASIGNADA → CANCELADA` con `PATCH /status` `{ "status": "CANCELADA", "comment": "motivo" }` (5-500 caracteres). El motivo se guarda en `cancel_reason` (`cancelReason` en la respuesta). `CANCELADA` es estado final: el trigger bloquea cambios y comentarios. Base existente: `database/migrations/002_cancelar_ticket.sql`. | — (solo backend) |
 | **Cierre automático** | Tarea programada (`AutoCloseJob`) que cierra los tickets en `RESUELTA` tras `AUTO_CLOSE_DAYS` días, con un comentario que lo explica. | — |
 
 **Si tu base de datos ya existía**, aplica la migración (no borra datos):

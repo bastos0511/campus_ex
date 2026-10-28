@@ -59,6 +59,7 @@ CREATE TABLE tickets (
     due_at                   TIMESTAMP,                -- SLA: fecha limite segun la prioridad
     rating                   SMALLINT,                 -- calificacion 1-5 al cerrar
     feedback                 VARCHAR(500),             -- comentario de la calificacion
+    cancel_reason            VARCHAR(500),             -- motivo al cancelar (solo CANCELADA)
 
     CONSTRAINT fk_tickets_requester
         FOREIGN KEY (requester_id) REFERENCES users (id) ON DELETE RESTRICT,
@@ -70,20 +71,26 @@ CREATE TABLE tickets (
     CONSTRAINT ck_tickets_priority CHECK (priority IN
         ('BAJA', 'MEDIA', 'ALTA', 'CRITICA')),
     CONSTRAINT ck_tickets_status   CHECK (status IN
-        ('ABIERTA', 'ASIGNADA', 'EN_PROCESO', 'RESUELTA', 'CERRADA')),
+        ('ABIERTA', 'ASIGNADA', 'EN_PROCESO', 'RESUELTA', 'CERRADA', 'CANCELADA')),
     CONSTRAINT ck_tickets_title        CHECK (length(trim(title)) >= 5),
     CONSTRAINT ck_tickets_description  CHECK (length(trim(description)) >= 10),
 
-    -- Consistency between status and assigned technician
+    -- Consistency between status and assigned technician.
+    -- CANCELADA may or may not have one (it comes from ABIERTA or ASIGNADA).
     CONSTRAINT ck_tickets_status_technician CHECK (
         (status = 'ABIERTA' AND assigned_technician_id IS NULL)
-        OR (status <> 'ABIERTA' AND assigned_technician_id IS NOT NULL)
+        OR status = 'CANCELADA'
+        OR (status NOT IN ('ABIERTA', 'CANCELADA') AND assigned_technician_id IS NOT NULL)
     ),
     CONSTRAINT ck_tickets_dates CHECK (updated_at >= created_at),
     CONSTRAINT ck_tickets_rating CHECK (rating IS NULL OR rating BETWEEN 1 AND 5),
     -- Solo un ticket CERRADA puede tener calificacion
     CONSTRAINT ck_tickets_rating_closed CHECK (
-        (rating IS NULL AND feedback IS NULL) OR status = 'CERRADA')
+        (rating IS NULL AND feedback IS NULL) OR status = 'CERRADA'),
+    -- Solo un ticket CANCELADA tiene motivo de cancelacion, y siempre lo tiene
+    CONSTRAINT ck_tickets_cancel_reason CHECK (
+        (status = 'CANCELADA' AND cancel_reason IS NOT NULL AND length(trim(cancel_reason)) >= 5)
+        OR (status <> 'CANCELADA' AND cancel_reason IS NULL))
 );
 
 CREATE INDEX idx_tickets_requester   ON tickets (requester_id);
@@ -133,9 +140,9 @@ CREATE TABLE ticket_history (
         FOREIGN KEY (ticket_id)     REFERENCES tickets (id) ON DELETE CASCADE,
 
     CONSTRAINT ck_history_previous CHECK (previous_status IS NULL OR previous_status IN
-        ('ABIERTA', 'ASIGNADA', 'EN_PROCESO', 'RESUELTA', 'CERRADA')),
+        ('ABIERTA', 'ASIGNADA', 'EN_PROCESO', 'RESUELTA', 'CERRADA', 'CANCELADA')),
     CONSTRAINT ck_history_new CHECK (new_status IN
-        ('ABIERTA', 'ASIGNADA', 'EN_PROCESO', 'RESUELTA', 'CERRADA'))
+        ('ABIERTA', 'ASIGNADA', 'EN_PROCESO', 'RESUELTA', 'CERRADA', 'CANCELADA'))
 );
 
 CREATE INDEX idx_history_ticket_changed ON ticket_history (ticket_id, changed_at ASC);
@@ -174,11 +181,11 @@ CREATE TRIGGER trg_tickets_technician_role
     BEFORE INSERT OR UPDATE OF assigned_technician_id ON tickets
     FOR EACH ROW EXECUTE FUNCTION fn_check_technician_role();
 
--- 3) CERRADA tickets cannot be modified
+-- 3) CERRADA and CANCELADA tickets (final statuses) cannot be modified
 CREATE OR REPLACE FUNCTION fn_block_closed_ticket() RETURNS TRIGGER AS $$
 BEGIN
-    IF OLD.status = 'CERRADA' THEN
-        RAISE EXCEPTION 'El ticket % está CERRADA y no puede modificarse', OLD.id
+    IF OLD.status IN ('CERRADA', 'CANCELADA') THEN
+        RAISE EXCEPTION 'El ticket % está % y no puede modificarse', OLD.id, OLD.status
             USING ERRCODE = 'check_violation';
     END IF;
     RETURN NEW;
@@ -189,11 +196,12 @@ CREATE TRIGGER trg_tickets_block_closed
     BEFORE UPDATE ON tickets
     FOR EACH ROW EXECUTE FUNCTION fn_block_closed_ticket();
 
--- 4) No comments on CERRADA tickets
+-- 4) No comments on CERRADA or CANCELADA tickets
 CREATE OR REPLACE FUNCTION fn_block_comment_closed() RETURNS TRIGGER AS $$
 BEGIN
-    IF EXISTS (SELECT 1 FROM tickets WHERE id = NEW.ticket_id AND status = 'CERRADA') THEN
-        RAISE EXCEPTION 'No se pueden agregar comentarios al ticket % (CERRADA)', NEW.ticket_id
+    IF EXISTS (SELECT 1 FROM tickets WHERE id = NEW.ticket_id
+               AND status IN ('CERRADA', 'CANCELADA')) THEN
+        RAISE EXCEPTION 'No se pueden agregar comentarios al ticket % (estado final)', NEW.ticket_id
             USING ERRCODE = 'check_violation';
     END IF;
     RETURN NEW;
@@ -242,7 +250,8 @@ SELECT
     COUNT(*) FILTER (WHERE status = 'ASIGNADA')          AS asignadas,
     COUNT(*) FILTER (WHERE status = 'EN_PROCESO')        AS en_proceso,
     COUNT(*) FILTER (WHERE status = 'RESUELTA')          AS resueltas,
-    COUNT(*) FILTER (WHERE status = 'CERRADA')           AS cerradas
+    COUNT(*) FILTER (WHERE status = 'CERRADA')           AS cerradas,
+    COUNT(*) FILTER (WHERE status = 'CANCELADA')         AS canceladas
 FROM tickets;
 
 COMMIT;

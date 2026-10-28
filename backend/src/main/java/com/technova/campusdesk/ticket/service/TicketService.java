@@ -38,8 +38,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TicketService {
 
-  // Single allowed step out of each status. CERRADA is final.
+  // Single allowed step out of each status. CERRADA and CANCELADA are final.
   // ABIERTA -> ASIGNADA only happens via assign(), never via changeStatus().
+  // CANCELADA is handled apart: allowed from ABIERTA or ASIGNADA.
   private static final Map<TicketStatus, TicketStatus> NEXT_STATUS = Map.of(
       TicketStatus.ABIERTA, TicketStatus.ASIGNADA,
       TicketStatus.ASIGNADA, TicketStatus.EN_PROCESO,
@@ -53,6 +54,10 @@ public class TicketService {
 
   // Largest page the search endpoint will return.
   private static final int MAX_PAGE_SIZE = 50;
+
+  // Length limits of the cancel reason (cancel_reason column and its CHECK).
+  private static final int MIN_CANCEL_REASON = 5;
+  private static final int MAX_CANCEL_REASON = 500;
 
   // Spring only injects constructor dependencies.
   public TicketService(TicketRepository tickets, UserRepository users,
@@ -172,12 +177,15 @@ public class TicketService {
   // Moves status one step. First checks who may do it (403), then the step (409).
   // Special case: the requester may reopen a RESUELTA ticket (back to EN_PROCESO)
   // giving a reason, which is saved as a comment.
+  // Special case: the requester may cancel an ABIERTA or ASIGNADA ticket
+  // giving a reason, which is saved in cancel_reason.
   @Transactional
   public TicketResponse changeStatus(Long ticketId, StatusChangeRequest request, AuthUser actor) {
     Ticket ticket = findAccessibleTicket(ticketId, actor);
     TicketStatus target = request.status();
     TicketStatus current = ticket.getStatus();
     boolean reopen = current == TicketStatus.RESUELTA && target == TicketStatus.EN_PROCESO;
+    boolean cancel = target == TicketStatus.CANCELADA;
     // Rating only makes sense when closing.
     if (target != TicketStatus.CERRADA && (request.rating() != null || hasText(request.feedback()))) {
       throw new BadRequestException("La calificacion solo se envia al cerrar el ticket");
@@ -189,6 +197,18 @@ public class TicketService {
       }
       if (!hasText(request.comment()) || request.comment().trim().length() < 5) {
         throw new BadRequestException("Indica el motivo para reabrir el ticket (minimo 5 caracteres)");
+      }
+    } else if (cancel) {
+      if (actor.role() != Role.USER || !isRequester(ticket, actor)) {
+        throw new ForbiddenException("Solo el solicitante puede cancelar su ticket");
+      }
+      if (current != TicketStatus.ABIERTA && current != TicketStatus.ASIGNADA) {
+        throw new BusinessRuleException("Solo se puede cancelar un ticket ABIERTA o ASIGNADA");
+      }
+      String reason = hasText(request.comment()) ? request.comment().trim() : "";
+      if (reason.length() < MIN_CANCEL_REASON || reason.length() > MAX_CANCEL_REASON) {
+        throw new BadRequestException("Indica el motivo para cancelar el ticket (entre "
+            + MIN_CANCEL_REASON + " y " + MAX_CANCEL_REASON + " caracteres)");
       }
     } else if (target == TicketStatus.EN_PROCESO || target == TicketStatus.RESUELTA) {
       if (actor.role() != Role.TECHNICIAN || !isAssignedTechnician(ticket, actor)) {
@@ -202,8 +222,8 @@ public class TicketService {
       throw new BusinessRuleException("Transicion no permitida: el estado " + target
           + " no se establece por este medio (la asignacion se hace con /assign)");
     }
-    // Step 2: the step must be the next one in the cycle (or the reopen step).
-    if (!reopen && NEXT_STATUS.get(current) != target) {
+    // Step 2: the step must be the next one in the cycle (or reopen/cancel).
+    if (!reopen && !cancel && NEXT_STATUS.get(current) != target) {
       throw new BusinessRuleException("Transicion de estado no permitida: " + current + " -> " + target);
     }
     User changedBy = loadUser(actor.id());
@@ -216,6 +236,10 @@ public class TicketService {
     if (target == TicketStatus.CERRADA) {
       ticket.setRating(request.rating() == null ? null : request.rating().shortValue());
       ticket.setFeedback(hasText(request.feedback()) ? request.feedback().trim() : null);
+    }
+    // Same for the cancel reason: CANCELADA is final too.
+    if (cancel) {
+      ticket.setCancelReason(request.comment().trim());
     }
     ticket.setStatus(target);
     Ticket saved = tickets.saveAndFlush(ticket);

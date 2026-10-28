@@ -46,7 +46,7 @@ public class CommentService {
   }
 
   // Adds a comment with the authenticated user as author.
-  // A CERRADA ticket accepts no comments. Only staff may write internal notes.
+  // A CERRADA or CANCELADA ticket accepts no comments. Only staff may write internal notes.
   @Transactional
   public CommentResponse add(Long ticketId, CommentRequest request, AuthUser actor) {
     Ticket ticket = ticketService.findAccessibleTicket(ticketId, actor);
@@ -54,8 +54,8 @@ public class CommentService {
     if (internal && actor.role() == Role.USER) {
       throw new ForbiddenException("Solo tecnicos y administradores pueden crear notas internas");
     }
-    if (ticket.getStatus() == TicketStatus.CERRADA) {
-      throw new BusinessRuleException("Un ticket CERRADA no admite comentarios");
+    if (ticket.getStatus().isFinal()) {
+      throw new BusinessRuleException("Un ticket " + ticket.getStatus() + " no admite comentarios");
     }
     User author = users.findById(actor.id())
         .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));

@@ -31,7 +31,8 @@ public class ReportService {
         countByStatus(scope, TicketStatus.ASIGNADA),
         countByStatus(scope, TicketStatus.EN_PROCESO),
         countByStatus(scope, TicketStatus.RESUELTA),
-        countByStatus(scope, TicketStatus.CERRADA));
+        countByStatus(scope, TicketStatus.CERRADA),
+        countByStatus(scope, TicketStatus.CANCELADA));
   }
 
   // Counts in-scope tickets sitting in one status.

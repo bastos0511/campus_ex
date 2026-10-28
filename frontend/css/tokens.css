@@ -1,0 +1,63 @@
+/* ============================================================
+   CampusDesk · css/tokens.css
+   Design tokens del estilo "Taller técnico".
+   Único lugar para colores, tipografías, bordes y sombras.
+   Sin degradados, sin glassmorphism, sin azules corporativos.
+   ============================================================ */
+:root {
+  /* Paleta */
+  --papel: #F4F1EA;
+  --superficie: #FFFDF8;
+  --tinta: #14130F;
+  --tinta-suave: #5C574B;
+  --acento: #FF5B2E;
+
+  /* Prioridades (franja lateral del ticket) */
+  --pr-urgente: #FF5B2E;
+  --pr-media: #F2C230;
+  --pr-baja: #A9C4A0;
+
+  /* Superficies de apoyo */
+  --papel-hondo: #ECE7D9;
+  --linea-suave: #D8D2C2;
+
+  /* Formas */
+  --borde: 1.5px solid var(--tinta);
+  --sombra: 6px 6px 0 var(--tinta);
+  --sombra-lg: 8px 8px 0 var(--tinta);
+  --sombra-sm: 3px 3px 0 var(--tinta);
+  --radio: 2px;
+
+  /* Tipografías (Google Fonts, con reservas del sistema) */
+  --font-titulos: "Bricolage Grotesque", "Arial Black", sans-serif;
+  --font-texto: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+  /* Compatibilidad: nombres anteriores mapeados al taller.
+     Evita valores sueltos en el resto de hojas. */
+  --bg: var(--papel);
+  --surface: var(--superficie);
+  --surface-2: var(--papel-hondo);
+  --ink: var(--tinta);
+  --muted: var(--tinta-suave);
+  --border: var(--linea-suave);
+  --border-strong: var(--tinta);
+  --primary: var(--tinta);
+  --primary-dark: var(--tinta);
+  --primary-soft: var(--papel-hondo);
+  --success: #2F6B3A;
+  --success-bg: #DCEBD9;
+  --warning: #7A5A00;
+  --warning-bg: #F9E9B8;
+  --danger: #A9321F;
+  --danger-bg: #F9D9CE;
+  --info: var(--tinta-suave);
+  --info-bg: var(--papel-hondo);
+  --sidebar: var(--tinta);
+  --sidebar-2: #23211B;
+  --radius: var(--radio);
+  --radius-sm: var(--radio);
+  --shadow: var(--sombra);
+  --font: var(--font-texto);
+  --mono: var(--font-mono);
+}

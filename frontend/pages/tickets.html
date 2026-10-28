@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusDesk · Tickets</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/tickets.css" />
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top"><a class="brand" href="../index.html"><span class="brand-mark">CD</span><span class="brand-text">Campus<b>Desk</b></span></a></div>
+    <nav aria-label="Principal">
+      <div class="nav-label">Principal</div>
+      <a class="nav-link" href="dashboard.html"><span class="ico">◧</span> Dashboard</a>
+      <a class="nav-link" href="tickets.html"><span class="ico">▤</span> Tickets</a>
+      <a class="nav-link" href="crear-ticket.html" data-visible-for="USER,ADMIN"><span class="ico">＋</span> Crear ticket</a>
+      <div class="nav-label" data-visible-for="ADMIN">Gestión</div>
+      <a class="nav-link" href="administracion.html" data-visible-for="ADMIN"><span class="ico">⚙</span> Administración</a>
+      <div class="nav-label">Sesión</div>
+      <a class="nav-link" href="login.html"><span class="ico">⏻</span> Cerrar sesión</a>
+    </nav>
+    <div class="sidebar-foot"><span class="role-chip">Rol: <b data-role-chip style="margin-left:4px">USER</b></span></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button id="menuBtn" class="btn btn-secondary btn-sm menu-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="sidebar">☰</button>
+      <span class="topbar-title">Tickets</span>
+      <span class="topbar-spacer"></span>
+      <a class="btn btn-primary btn-sm" href="crear-ticket.html" data-visible-for="USER,ADMIN">＋ Crear ticket</a>
+    </header>
+
+    <main class="content">
+      <div class="page-head">
+        <div><p class="page-date" data-page-date></p><h1>Listado de tickets</h1><p><span id="ticketsCount">—</span> · Filtra por estado, prioridad, categoría o tickets vencidos.</p></div>
+      </div>
+
+      <section class="filters" aria-label="Filtros">
+        <div class="field search-field"><label for="searchInput">Buscar</label>
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+            <input id="searchInput" type="search" placeholder="Título, texto o #ID…" />
+          </div>
+        </div>
+        <div class="filter-group">
+          <div class="field"><label for="filterEstado">Estado</label>
+            <select id="filterEstado"><option value="">Todos</option><option>ABIERTA</option><option>ASIGNADA</option><option>EN_PROCESO</option><option>RESUELTA</option><option>CERRADA</option></select></div>
+          <div class="field"><label for="filterPrioridad">Prioridad</label>
+            <select id="filterPrioridad"><option value="">Todas</option><option>BAJA</option><option>MEDIA</option><option>ALTA</option><option>CRITICA</option></select></div>
+          <div class="field"><label for="filterCategoria">Categoría</label>
+            <select id="filterCategoria"><option value="">Todas</option><option>HARDWARE</option><option>SOFTWARE</option><option>REDES</option><option>ACCESOS</option><option>OTROS</option></select></div>
+          <div class="field check-field"><span class="check-label" aria-hidden="true">SLA</span>
+            <label class="check"><input id="filterVencidos" type="checkbox" /> Solo vencidos</label></div>
+        </div>
+        <div style="align-self:end"><button id="clearFiltersBtn" class="clear-link" type="button" hidden>Limpiar filtros</button></div>
+      </section>
+
+      <div id="ticketsAlert" class="alert" role="alert" style="margin-bottom:14px"></div>
+
+      <div class="ticket-list" id="ticketsBody" aria-live="polite">
+        <div class="empty">Cargando…</div>
+      </div>
+
+      <nav class="pager" id="ticketsPager" aria-label="Paginación" hidden>
+        <button id="prevPageBtn" class="btn btn-secondary btn-sm" type="button">← Anterior</button>
+        <span id="pageInfo" class="pager-info mono">Página 1 de 1</span>
+        <button id="nextPageBtn" class="btn btn-secondary btn-sm" type="button">Siguiente →</button>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<script src="../js/config.js?v=5"></script>
+<script src="../js/api.js?v=5"></script>
+<script src="../js/ui.js?v=5"></script>
+<script src="../js/tickets.js?v=5"></script>
+</body>
+</html>

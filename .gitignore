@@ -1,0 +1,18 @@
+# IntelliJ IDEA (configuración local del IDE, incluye secretos de ejecución)
+.idea/
+*.iml
+
+# Maven / Java (generados por compilación)
+target/
+*.class
+*.log
+
+# Variables de entorno y secretos locales (nunca se comparten)
+.env
+.env.local
+application-local.properties
+
+# Archivos temporales del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini

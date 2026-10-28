@@ -1,0 +1,60 @@
+/* CampusDesk · tickets.css — "Taller técnico" */
+.filters { background: var(--superficie); border: var(--borde); box-shadow: var(--sombra); padding: 14px; margin-bottom: 18px; display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
+.filters .field { min-width: 150px; flex: 1; }
+.filters label { font-size: .78rem; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .06em; }
+/* Buscador amplio con lupa integrada. */
+.search-field { flex: 2 1 240px; }
+.search-wrap { position: relative; }
+.search-wrap svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--tinta-suave); pointer-events: none; }
+.search-wrap input { padding-left: 34px; }
+.filter-group { display: flex; gap: 10px; flex: 3 1 320px; flex-wrap: wrap; }
+.filter-group .field { min-width: 130px; }
+/* Limpiar filtros: enlace sutil, visible solo con filtros activos. */
+.clear-link { background: none; border: none; color: var(--tinta); font-size: .85rem; font-weight: 600; cursor: pointer; padding: 10px 4px; min-height: 44px; white-space: nowrap; font-family: inherit; text-decoration: underline; }
+.clear-link:hover { background: var(--acento); }
+/* Casilla "Solo vencidos" alineada con los selects. */
+.filters .check-field { min-width: 130px; flex: 0 1 auto; }
+.check-label { display: block; font-size: .78rem; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; margin-bottom: 6px; }
+/* label.check gana a ".field label" sin !important, así el estilo en línea
+   display:none de data-visible-for sigue ocultándola según el rol. */
+label.check { display: flex; align-items: center; gap: 8px; min-height: 44px; border: var(--borde); background: var(--superficie); padding: 0 12px; cursor: pointer; font-family: var(--font-texto); text-transform: none; letter-spacing: 0; font-size: .9rem; font-weight: 600; margin: 0; }
+.filters label.check { font-family: var(--font-texto); text-transform: none; letter-spacing: 0; font-size: .9rem; }
+label.check input { width: 18px; height: 18px; min-height: 0; padding: 0; border: none; box-shadow: none; accent-color: var(--tinta); margin: 0; flex: none; }
+/* Paginación del listado. */
+.pager { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 22px; flex-wrap: wrap; }
+.pager[hidden] { display: none; }
+.pager-info { font-size: .82rem; color: var(--tinta-suave); }
+
+.detail-grid { display: grid; grid-template-columns: 1.5fr .9fr; gap: 14px; align-items: start; }
+.kv { display: grid; grid-template-columns: 160px 1fr; gap: 8px 14px; font-size: .92rem; }
+.kv dt { color: var(--tinta-suave); font-family: var(--font-mono); font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; } .kv dd { margin: 0; font-weight: 600; }
+.timeline { list-style: none; margin: 14px 0 0; padding: 0; }
+.timeline li { position: relative; padding: 0 0 18px 28px; }
+.timeline li::before { content: ""; position: absolute; left: 8px; top: 20px; bottom: -2px; width: 1.5px; background: var(--tinta); }
+.timeline li:last-child::before { display: none; }
+.timeline .t-dot { position: absolute; left: 2px; top: 4px; width: 14px; height: 14px; background: var(--superficie); border: var(--borde); }
+.timeline li.current .t-dot { background: var(--acento); }
+.comment { border: var(--borde); box-shadow: var(--sombra-sm); padding: 12px 13px; margin-bottom: 10px; background: var(--superficie); }
+.comment-head { display: flex; justify-content: space-between; gap: 8px; font-size: .82rem; color: var(--tinta-suave); margin-bottom: 6px; }
+.comment-head b { color: var(--tinta); }
+/* Nota interna: solo la ven técnicos y administradores. */
+.comment.internal { background: var(--papel-hondo); border-style: dashed; box-shadow: none; }
+.internal-tag { font-family: var(--font-mono); font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; border: 1.5px dashed var(--tinta); padding: 2px 7px; margin-left: 8px; color: var(--tinta); }
+label.check.inline { border: none; background: none; padding: 0; min-height: 32px; }
+/* Formularios de cierre y reapertura. */
+.subform { border-top: 1.5px dashed var(--linea-suave); padding-top: 14px; margin-top: 14px; }
+.subform h4 { margin: 0 0 4px; font-family: var(--font-titulos); font-size: 1.05rem; }
+.star-picker { display: flex; gap: 6px; flex-wrap: wrap; border: none; padding: 0; margin: 0; }
+.star-picker legend { font-weight: 600; font-size: .87rem; margin-bottom: 6px; padding: 0; }
+.star-picker input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.star-picker label { display: grid; place-items: center; width: 44px; height: 44px; border: var(--borde); background: var(--superficie); font-size: 1.25rem; cursor: pointer; color: var(--linea-suave); margin: 0; }
+.star-picker label.on { color: var(--tinta); background: var(--pr-media); }
+.star-picker input:focus-visible + label { outline: 2px solid var(--acento); outline-offset: 2px; }
+.rating-text { font-size: .85rem; color: var(--tinta-suave); margin-top: 4px; font-weight: 400; }
+
+@media (max-width: 900px) { .detail-grid { grid-template-columns: 1fr; } }
+@media (max-width: 520px) {
+  .kv { grid-template-columns: 1fr; gap: 2px; }
+  .kv dd { margin-bottom: 8px; }
+  .filters .field { min-width: 100%; }
+}

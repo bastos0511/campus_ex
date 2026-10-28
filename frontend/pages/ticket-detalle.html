@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusDesk · Detalle del ticket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/tickets.css" />
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top"><a class="brand" href="../index.html"><span class="brand-mark">CD</span><span class="brand-text">Campus<b>Desk</b></span></a></div>
+    <nav aria-label="Principal">
+      <div class="nav-label">Principal</div>
+      <a class="nav-link" href="dashboard.html"><span class="ico">◧</span> Dashboard</a>
+      <a class="nav-link" href="tickets.html"><span class="ico">▤</span> Tickets</a>
+      <a class="nav-link" href="crear-ticket.html" data-visible-for="USER,ADMIN"><span class="ico">＋</span> Crear ticket</a>
+      <div class="nav-label" data-visible-for="ADMIN">Gestión</div>
+      <a class="nav-link" href="administracion.html" data-visible-for="ADMIN"><span class="ico">⚙</span> Administración</a>
+      <div class="nav-label">Sesión</div>
+      <a class="nav-link" href="login.html"><span class="ico">⏻</span> Cerrar sesión</a>
+    </nav>
+    <div class="sidebar-foot"><span class="role-chip">Rol: <b data-role-chip style="margin-left:4px">USER</b></span></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button id="menuBtn" class="btn btn-secondary btn-sm menu-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="sidebar">☰</button>
+      <span class="topbar-title"><a href="tickets.html" style="color:var(--muted)">← Tickets</a> / <span id="dId" class="mono">TCK-…</span></span>
+      <span class="topbar-spacer"></span>
+    </header>
+
+    <main class="content">
+      <div class="page-head"><div><h1 id="dTitulo">Detalle del ticket</h1></div><div id="dEstado"></div></div>
+
+      <div id="detalleNotFound" class="card" style="display:none">
+        <h2 style="margin-top:0">Ticket no encontrado</h2>
+        <p class="muted">No existe ningún ticket con ese identificador en el sistema. Es posible que el enlace sea incorrecto.</p>
+        <p><a class="btn btn-secondary" href="tickets.html">Volver al listado</a></p>
+      </div>
+
+      <div id="detalleContent">
+      <div id="readonlyNote" class="readonly-note" style="display:none;margin-bottom:14px">🔒 Ticket <b>CERRADO</b> — solo lectura. No admite comentarios ni cambios.</div>
+
+      <div class="detail-grid">
+        <div>
+          <section class="card" style="margin-bottom:14px">
+            <h3 style="margin-top:0">Descripción</h3>
+            <p id="dDescripcion" style="color:var(--ink)"></p>
+            <hr style="border:none;border-top:1px solid var(--border);margin:16px 0" />
+            <dl class="kv">
+              <dt>Categoría</dt><dd id="dCategoria"></dd>
+              <dt>Prioridad</dt><dd id="dPrioridad"></dd>
+              <dt>Solicitante</dt><dd id="dSolicitante"></dd>
+              <dt>Técnico asignado</dt><dd id="dTecnico"></dd>
+              <dt>Fecha</dt><dd id="dFecha"></dd>
+              <dt>Fecha límite (SLA)</dt><dd id="dVence"></dd>
+              <dt id="dCalificacionLabel" style="display:none">Calificación</dt><dd id="dCalificacion" style="display:none"></dd>
+            </dl>
+          </section>
+
+          <section class="card" id="actionsCard" style="display:none;margin-bottom:14px">
+            <h3 style="margin-top:0">Acciones</h3>
+            <div id="actionsAlert" class="alert" role="alert" style="margin-bottom:10px"></div>
+            <div class="form-actions" id="statusActions"></div>
+            <form id="editForm" class="form" style="display:none;margin-top:12px" novalidate>
+              <div class="field">
+                <label for="editTitulo">Título</label>
+                <input id="editTitulo" type="text" required aria-describedby="editTituloError" aria-invalid="false" />
+                <small class="field-error" id="editTituloError">Mínimo 5 caracteres.</small>
+              </div>
+              <div class="field">
+                <label for="editDescripcion">Descripción</label>
+                <textarea id="editDescripcion" required aria-describedby="editDescripcionError" aria-invalid="false"></textarea>
+                <small class="field-error" id="editDescripcionError">Mínimo 10 caracteres.</small>
+              </div>
+              <div class="form-row">
+                <div class="field">
+                  <label for="editCategoria">Categoría</label>
+                  <select id="editCategoria" required>
+                    <option>HARDWARE</option><option>SOFTWARE</option><option>REDES</option><option>ACCESOS</option><option>OTROS</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="editPrioridad">Prioridad</label>
+                  <select id="editPrioridad" required>
+                    <option>BAJA</option><option>MEDIA</option><option>ALTA</option><option>CRITICA</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button id="saveEditBtn" class="btn btn-primary btn-sm" type="submit">Guardar cambios</button>
+                <button id="cancelEditBtn" class="btn btn-secondary btn-sm" type="button">Cancelar</button>
+              </div>
+            </form>
+
+            <!-- Cerrar con calificación (solo el solicitante, ticket RESUELTA) -->
+            <form id="closeForm" class="form subform" style="display:none" novalidate>
+              <div>
+                <h4>Cerrar ticket</h4>
+                <p class="muted" style="font-size:.85rem">Al cerrarlo ya no se podrá modificar ni comentar. Tu calificación es opcional.</p>
+              </div>
+              <fieldset class="star-picker" id="starPicker">
+                <legend>¿Cómo calificas la atención?</legend>
+                <input type="radio" name="rating" id="star1" value="1" /><label for="star1" title="1 de 5">★</label>
+                <input type="radio" name="rating" id="star2" value="2" /><label for="star2" title="2 de 5">★</label>
+                <input type="radio" name="rating" id="star3" value="3" /><label for="star3" title="3 de 5">★</label>
+                <input type="radio" name="rating" id="star4" value="4" /><label for="star4" title="4 de 5">★</label>
+                <input type="radio" name="rating" id="star5" value="5" /><label for="star5" title="5 de 5">★</label>
+              </fieldset>
+              <p id="ratingText" class="rating-text" aria-live="polite">Sin calificación</p>
+              <div class="field">
+                <label for="closeFeedback">Comentario sobre la atención (opcional)</label>
+                <textarea id="closeFeedback" maxlength="500" style="min-height:80px" placeholder="¿Qué tal fue la solución?"></textarea>
+              </div>
+              <div class="form-actions">
+                <button id="confirmCloseBtn" class="btn btn-primary btn-sm" type="submit">Confirmar cierre</button>
+                <button class="btn btn-secondary btn-sm" type="button" data-cancel-subform>Cancelar</button>
+              </div>
+            </form>
+
+            <!-- Reabrir (solo el solicitante, ticket RESUELTA) -->
+            <form id="reopenForm" class="form subform" style="display:none" novalidate>
+              <div>
+                <h4>Reabrir ticket</h4>
+                <p class="muted" style="font-size:.85rem">El ticket vuelve a EN PROCESO con el mismo técnico. Explica qué sigue fallando.</p>
+              </div>
+              <div class="field">
+                <label for="reopenReason">Motivo</label>
+                <textarea id="reopenReason" maxlength="1900" style="min-height:90px" required aria-describedby="reopenReasonError" aria-invalid="false" placeholder="El problema persiste porque…"></textarea>
+                <small class="field-error" id="reopenReasonError">Escribe al menos 5 caracteres.</small>
+              </div>
+              <div class="form-actions">
+                <button id="confirmReopenBtn" class="btn btn-primary btn-sm" type="submit">Reabrir ticket</button>
+                <button class="btn btn-secondary btn-sm" type="button" data-cancel-subform>Cancelar</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="card">
+            <h3 style="margin-top:0">Comentarios</h3>
+            <div id="commentsList"></div>
+            <div id="commentAlert" class="alert" role="alert" style="margin-bottom:10px"></div>
+            <form id="commentForm" class="form">
+              <div class="field">
+                <label for="commentText">Añadir comentario</label>
+                <textarea id="commentText" placeholder="Escribe una actualización o pregunta…" aria-describedby="commentAlert"></textarea>
+              </div>
+              <label class="check inline" data-visible-for="TECHNICIAN,ADMIN">
+                <input id="commentInternal" type="checkbox" /> Nota interna (el solicitante no la verá)
+              </label>
+              <div class="form-actions"><button id="commentBtn" class="btn btn-primary btn-sm" type="submit">Enviar comentario</button></div>
+            </form>
+          </section>
+        </div>
+
+        <aside class="card">
+          <h3 style="margin-top:0">Historial de estados</h3>
+          <p class="muted" style="font-size:.84rem;margin:0">Flujo: ABIERTA → ASIGNADA → EN_PROCESO → RESUELTA → CERRADA. Si el solicitante reabre, vuelve a EN_PROCESO. Solo lectura.</p>
+          <p id="reopenCount" class="cell-sub" style="display:none;margin-top:8px"></p>
+          <ol id="historyList" class="timeline"></ol>
+        </aside>
+      </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../js/config.js?v=5"></script>
+<script src="../js/api.js?v=5"></script>
+<script src="../js/ui.js?v=5"></script>
+<script src="../js/ticket-detalle.js?v=5"></script>
+</body>
+</html>

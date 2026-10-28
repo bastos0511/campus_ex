@@ -1,0 +1,35 @@
+/* CampusDesk · auth.css — "Taller técnico" */
+.auth-body {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--papel);
+}
+.auth-side {
+  background: var(--tinta);
+  color: var(--papel);
+  padding: 48px 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: var(--borde);
+}
+.auth-side h2 { font-size: 2.4rem; line-height: 0.95; letter-spacing: -0.02em; margin: 26px 0 10px; color: var(--papel); font-weight: 700; }
+.auth-side p { color: var(--papel); opacity: .8; max-width: 42ch; }
+.auth-checks { list-style: none; padding: 0; margin: 26px 0 0; display: flex; flex-direction: column; gap: 12px; }
+.auth-checks li { background: transparent; border: 1.5px solid var(--papel); padding: 11px 13px; font-size: .9rem; }
+.auth-checks b { color: var(--acento); }
+.auth-foot { color: var(--papel); opacity: .6; font-size: .8rem; font-family: var(--font-mono); }
+
+.auth-main { display: grid; place-items: center; padding: 36px 22px; }
+.auth-card { width: 100%; max-width: 440px; background: var(--superficie); border: var(--borde); box-shadow: var(--sombra-lg); padding: 30px 28px; }
+.auth-card h1 { margin: 0 0 6px; font-size: 2rem; letter-spacing: -0.02em; }
+.auth-card .sub { color: var(--tinta-suave); margin: 0 0 18px; font-size: .92rem; }
+.auth-alt { text-align: center; margin-top: 16px; font-size: .9rem; color: var(--tinta-suave); }
+.auth-logo-mobile { display: none; margin-bottom: 14px; }
+
+@media (max-width: 900px) {
+  .auth-body { grid-template-columns: 1fr; }
+  .auth-side { display: none; }
+  .auth-logo-mobile { display: block; }
+}

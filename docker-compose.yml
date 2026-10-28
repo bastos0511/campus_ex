@@ -1,0 +1,26 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: campusdesk-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: technova_db
+      POSTGRES_USER: campusdesk_app
+      POSTGRES_PASSWORD: campusdesk_dev
+      TZ: UTC
+      PGTZ: UTC
+    ports:
+      - "5432:5432"
+    volumes:
+      - campusdesk_pgdata:/var/lib/postgresql/data
+      # Solo se ejecutan la primera vez (cuando el volumen está vacío), en orden alfabético.
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U campusdesk_app -d technova_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  campusdesk_pgdata:

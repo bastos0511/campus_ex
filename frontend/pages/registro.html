@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusDesk · Crear cuenta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/auth.css" />
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml" />
+</head>
+<body class="auth-body">
+  <aside class="auth-side">
+    <a class="brand" href="../index.html"><span class="brand-mark">CD</span><span class="brand-text">Campus<b>Desk</b></span></a>
+    <div style="text-align:center;margin:auto 0">
+      <h2>Crea tu cuenta en segundos.</h2>
+      <p>Únete a la plataforma de soporte de TechNova Solutions.</p>
+    </div>
+  </aside>
+
+  <main class="auth-main">
+    <div class="auth-card">
+      <a class="brand auth-logo-mobile" href="../index.html"><span class="brand-mark">CD</span><span class="brand-text" style="color:var(--ink)">Campus<b>Desk</b></span></a>
+      <h1>Crear cuenta</h1>
+      <p class="sub">Únete a la plataforma de soporte de TechNova.</p>
+      <div id="registerAlert" class="alert" role="alert"></div>
+      <form id="registerForm" class="form" novalidate>
+        <div class="field">
+          <label for="regName">Nombre completo</label>
+          <input id="regName" type="text" autocomplete="name" placeholder="Ana García" required aria-describedby="regNameError" aria-invalid="false" />
+          <small class="field-error" id="regNameError"></small>
+        </div>
+        <div class="field">
+          <label for="regEmail">Correo electrónico</label>
+          <input id="regEmail" type="email" autocomplete="email" placeholder="tu@campus.edu" required aria-describedby="regEmailError" aria-invalid="false" />
+          <small class="field-error" id="regEmailError"></small>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="regPassword">Contraseña</label>
+            <input id="regPassword" type="password" autocomplete="new-password" placeholder="Mín. 8 caracteres" required aria-describedby="regPasswordError" aria-invalid="false" />
+            <small class="field-error" id="regPasswordError"></small>
+          </div>
+          <div class="field">
+            <label for="regPassword2">Confirmar contraseña</label>
+            <input id="regPassword2" type="password" autocomplete="new-password" placeholder="Repite tu clave" required aria-describedby="regPassword2Error" aria-invalid="false" />
+            <small class="field-error" id="regPassword2Error"></small>
+          </div>
+        </div>
+        <!-- Sin selector de rol por requerimiento -->
+        <button id="registerBtn" class="btn btn-primary btn-block" type="submit">Registrarse</button>
+      </form>
+      <p class="auth-alt">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+    </div>
+  </main>
+
+  <script src="../js/config.js?v=5"></script>
+  <script src="../js/api.js?v=5"></script>
+  <script src="../js/ui.js?v=5"></script>
+  <script src="../js/auth.js?v=5"></script>
+</body>
+</html>

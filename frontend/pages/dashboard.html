@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusDesk · Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <a class="brand" href="../index.html"><span class="brand-mark">CD</span><span class="brand-text">Campus<b>Desk</b></span></a>
+    </div>
+    <nav aria-label="Principal">
+      <div class="nav-label">Principal</div>
+      <a class="nav-link" href="dashboard.html"><span class="ico">◧</span> Dashboard</a>
+      <a class="nav-link" href="tickets.html" data-visible-for="ALL"><span class="ico">▤</span> <span data-visible-for="USER">Mis tickets</span><span data-visible-for="TECHNICIAN">Tickets asignados</span><span data-visible-for="ADMIN">Todos los tickets</span></a>
+      <a class="nav-link" href="crear-ticket.html" data-visible-for="USER,ADMIN"><span class="ico">＋</span> Crear ticket</a>
+      <div class="nav-label" data-visible-for="ADMIN">Gestión</div>
+      <a class="nav-link" href="administracion.html" data-visible-for="ADMIN"><span class="ico">⚙</span> Administración</a>
+      <div class="nav-label">Sesión</div>
+      <a class="nav-link" href="login.html"><span class="ico">⏻</span> Cerrar sesión</a>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="role-chip">Rol: <b data-role-chip style="margin-left:4px">USER</b></span>
+      <div class="user-mini"><div class="avatar" data-session-avatar>D</div><div><b data-session-name>—</b><small data-session-email></small></div></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button id="menuBtn" class="btn btn-secondary btn-sm menu-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="sidebar">☰</button>
+      <span class="topbar-title">Dashboard</span>
+      <span class="topbar-spacer"></span>
+      <a class="btn btn-primary btn-sm" href="crear-ticket.html" data-visible-for="USER,ADMIN">＋ Crear ticket</a>
+    </header>
+
+    <main class="content">
+      <div class="page-head">
+        <div><p class="page-date" data-page-date></p><h1>Resumen del sistema</h1><p>Visión general de incidencias por estado.</p></div>
+      </div>
+
+      <div id="dashboardAlert" class="alert" role="alert" style="margin-bottom:14px"></div>
+
+      <section class="stats-grid" aria-label="Estadísticas de tickets">
+        <div class="stat"><small>Total</small><strong id="statTotal">—</strong><span>Tickets registrados</span></div>
+        <div class="stat"><small>Abiertos</small><strong id="statAbiertas">—</strong><span>Estado ABIERTA</span></div>
+        <div class="stat"><small>En proceso</small><strong id="statProceso">—</strong><span>Estado EN_PROCESO</span></div>
+        <div class="stat"><small>Resueltos</small><strong id="statResueltas">—</strong><span>Estado RESUELTA</span></div>
+        <div class="stat"><small>Cerrados</small><strong id="statCerradas">—</strong><span>Estado CERRADA · solo lectura</span></div>
+      </section>
+
+      <div class="dashboard-grid">
+        <section class="panel">
+          <h2>Tickets recientes</h2>
+          <div class="ticket-list" id="recentBody" aria-live="polite"><div class="empty">Cargando…</div></div>
+          <p style="margin:12px 0 0"><a href="tickets.html">Ver todos los tickets →</a></p>
+        </section>
+        <section class="panel">
+          <h2>Flujo de estados</h2>
+          <div class="flow">
+            <span class="badge st-ABIERTA">Abierta</span><span class="arrow">→</span>
+            <span class="badge st-ASIGNADA">Asignada</span><span class="arrow">→</span>
+            <span class="badge st-EN_PROCESO">En proceso</span><span class="arrow">→</span>
+            <span class="badge st-RESUELTA">Resuelta</span><span class="arrow">→</span>
+            <span class="badge st-CERRADA">Cerrada</span>
+          </div>
+          <p class="muted" style="font-size:.87rem">Un ticket cerrado es de solo lectura: sin comentarios ni cambios.</p>
+          <hr style="border:none;border-top:1px solid var(--border);margin:14px 0" />
+          <h2>Por categoría</h2>
+          <ul class="mini-list" id="categoryCounts"></ul>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../js/config.js?v=5"></script>
+<script src="../js/api.js?v=5"></script>
+<script src="../js/ui.js?v=5"></script>
+<script src="../js/dashboard.js?v=5"></script>
+</body>
+</html>

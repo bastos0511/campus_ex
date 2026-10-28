@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusDesk · Administración</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top"><a class="brand" href="../index.html"><span class="brand-mark">CD</span><span class="brand-text">Campus<b>Desk</b></span></a></div>
+    <nav aria-label="Principal">
+      <div class="nav-label">Principal</div>
+      <a class="nav-link" href="dashboard.html"><span class="ico">◧</span> Dashboard</a>
+      <a class="nav-link" href="tickets.html"><span class="ico">▤</span> Todos los tickets</a>
+      <div class="nav-label">Gestión</div>
+      <a class="nav-link" href="administracion.html"><span class="ico">⚙</span> Administración</a>
+      <div class="nav-label">Sesión</div>
+      <a class="nav-link" href="login.html"><span class="ico">⏻</span> Cerrar sesión</a>
+    </nav>
+    <div class="sidebar-foot"><span class="role-chip">Rol: <b data-role-chip style="margin-left:4px">USER</b></span>
+      <div class="user-mini"><div class="avatar" data-session-avatar>D</div><div><b data-session-name>—</b><small data-session-email></small></div></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button id="menuBtn" class="btn btn-secondary btn-sm menu-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="sidebar">☰</button>
+      <span class="topbar-title">Administración</span>
+      <span class="topbar-spacer"></span>
+    </header>
+
+    <main class="content">
+      <div class="page-head"><div><p class="page-date" data-page-date></p><h1>Panel administrativo</h1><p>Consulta tickets, técnicos y usuarios. Asigna y reasigna técnicos.</p></div></div>
+
+      <div class="admin-grid">
+        <div class="card"><small class="muted">TICKETS TOTALES</small><h2 style="margin:4px 0" id="countTickets">—</h2><span class="muted">en BD</span></div>
+        <div class="card"><small class="muted">TÉCNICOS</small><h2 style="margin:4px 0" id="countTechs">—</h2><span class="muted">en BD</span></div>
+        <div class="card"><small class="muted">USUARIOS</small><h2 style="margin:4px 0" id="countUsers">—</h2><span class="muted">en BD</span></div>
+      </div>
+
+      <div id="adminAlert" class="alert" role="alert" style="margin-bottom:14px"></div>
+
+      <div class="tabs" role="tablist" aria-label="Secciones de administración">
+        <button class="tab-btn active" role="tab" id="tabbtn-tickets" aria-selected="true" aria-controls="tab-tickets" data-tab="tickets">Tickets</button>
+        <button class="tab-btn" role="tab" id="tabbtn-tecnicos" aria-selected="false" aria-controls="tab-tecnicos" data-tab="tecnicos" tabindex="-1">Técnicos</button>
+        <button class="tab-btn" role="tab" id="tabbtn-asignar" aria-selected="false" aria-controls="tab-asignar" data-tab="asignar" tabindex="-1">Asignaciones</button>
+        <button class="tab-btn" role="tab" id="tabbtn-usuarios" aria-selected="false" aria-controls="tab-usuarios" data-tab="usuarios" tabindex="-1">Usuarios</button>
+        <button class="tab-btn" role="tab" id="tabbtn-stats" aria-selected="false" aria-controls="tab-stats" data-tab="stats" tabindex="-1">Estadísticas</button>
+      </div>
+
+      <section id="tab-tickets" class="tab-panel active" role="tabpanel" aria-labelledby="tabbtn-tickets" tabindex="0">
+        <div class="ticket-list" id="adminTicketsBody" aria-live="polite"></div>
+      </section>
+
+      <section id="tab-tecnicos" class="tab-panel" role="tabpanel" aria-labelledby="tabbtn-tecnicos" tabindex="0" hidden>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th></tr></thead>
+          <tbody id="techBody"></tbody>
+        </table></div>
+      </section>
+
+      <section id="tab-asignar" class="tab-panel" role="tabpanel" aria-labelledby="tabbtn-asignar" tabindex="0" hidden>
+        <div class="card">
+          <h3 style="margin-top:0">Asignar / reasignar técnico</h3>
+          <div id="assignAlert" class="alert" role="alert" style="margin-bottom:12px"></div>
+          <form id="assignForm" class="form">
+            <div class="assign-row">
+              <div class="field"><label for="assignTicket">Ticket</label><select id="assignTicket" aria-describedby="assignAlert"></select></div>
+              <div class="field"><label for="assignTech">Técnico</label><select id="assignTech" aria-describedby="assignAlert"></select></div>
+              <div><button id="assignBtn" class="btn btn-primary" type="submit">Asignar</button></div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="tab-usuarios" class="tab-panel" role="tabpanel" aria-labelledby="tabbtn-usuarios" tabindex="0" hidden>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th></tr></thead>
+          <tbody id="usersBody"></tbody>
+        </table></div>
+        <p class="muted" style="font-size:.85rem">Los roles los gestiona el backend. El frontend solo los muestra.</p>
+      </section>
+
+      <section id="tab-stats" class="tab-panel" role="tabpanel" aria-labelledby="tabbtn-stats" tabindex="0" hidden>
+        <div class="card"><h3 style="margin-top:0">Estadísticas</h3>
+        <p class="muted" id="adminStatsText">Cargando…</p></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script src="../js/config.js?v=5"></script>
+<script src="../js/api.js?v=5"></script>
+<script src="../js/ui.js?v=5"></script>
+<script src="../js/admin.js?v=5"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusDesk — Plataforma de soporte tecnológico</title>
+  <meta name="description" content="CampusDesk: gestión de incidencias tecnológicas. Hardware, Software, Redes, Accesos y más." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+</head>
+<body class="landing">
+  <header class="landing-nav">
+    <div class="container landing-nav-inner">
+      <a class="brand" href="index.html" aria-label="CampusDesk inicio">
+        <span class="brand-mark" aria-hidden="true">CD</span>
+        <span class="brand-text">Campus<b>Desk</b></span>
+      </a>
+      <nav class="landing-links">
+        <a href="pages/login.html" class="btn btn-ghost">Iniciar sesión</a>
+        <a href="pages/registro.html" class="btn btn-primary">Crear cuenta</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container landing-hero">
+    <div class="hero-copy">
+      <span class="pill">TechNova Solutions · Mesa de ayuda</span>
+      <h1>Gestión de incidencias tecnológicas, sin fricción.</h1>
+      <p class="lead">Reporta problemas de <strong>Hardware, Software, Redes y Accesos</strong>, sigue su estado en tiempo real y colabora con el equipo técnico. Interfaz lista para conectarse a la API REST.</p>
+      <div class="hero-actions">
+        <a href="pages/login.html" class="btn btn-primary btn-lg">Entrar a CampusDesk</a>
+        <a href="pages/registro.html" class="btn btn-secondary btn-lg">Crear cuenta</a>
+      </div>
+      <ul class="hero-meta">
+        <li><span class="dot dot-green"></span> ABIERTA → ASIGNADA → EN_PROCESO → RESUELTA → CERRADA</li>
+      </ul>
+    </div>
+    <div class="hero-panel" aria-hidden="true">
+      <div class="mock-window">
+        <div class="mock-bar"><i></i><i></i><i></i></div>
+        <div class="mock-body">
+          <div class="mock-stats">
+            <div></div><div></div><div></div><div></div>
+          </div>
+          <div class="mock-rows">
+            <div></div><div></div><div></div><div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <section class="container landing-grid">
+    <article class="card"><h3>Tickets trazables</h3><p>ID, categoría, prioridad, estado, técnico y fecha en una tabla limpia con filtros.</p></article>
+    <article class="card"><h3>Flujo de estados claro</h3><p>Badges y timeline visual para cada cambio. Los cerrados son solo lectura.</p></article>
+  </section>
+
+  <footer class="landing-footer">
+    <div class="container">
+      <small>CampusDesk · Mesa de ayuda TechNova Solutions</small>
+    </div>
+  </footer>
+
+  <script src="js/config.js?v=5"></script>
+  <script src="js/ui.js?v=5"></script>
+</body>
+</html>

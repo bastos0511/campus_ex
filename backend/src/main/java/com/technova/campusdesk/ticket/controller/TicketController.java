@@ -1,5 +1,8 @@
 package com.technova.campusdesk.ticket.controller;
 
+import com.technova.campusdesk.attachment.dto.AttachmentRequest;
+import com.technova.campusdesk.attachment.dto.AttachmentResponse;
+import com.technova.campusdesk.attachment.service.AttachmentService;
 import com.technova.campusdesk.ticket.dto.AssignRequest;
 import com.technova.campusdesk.comment.dto.CommentRequest;
 import com.technova.campusdesk.comment.dto.CommentResponse;
@@ -21,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,11 +42,14 @@ public class TicketController {
 
   private final TicketService ticketService;
   private final CommentService commentService;
+  private final AttachmentService attachmentService;
 
   // Spring only injects constructor dependencies.
-  public TicketController(TicketService ticketService, CommentService commentService) {
+  public TicketController(TicketService ticketService, CommentService commentService,
+      AttachmentService attachmentService) {
     this.ticketService = ticketService;
     this.commentService = commentService;
+    this.attachmentService = attachmentService;
   }
 
   // Lists role-visible tickets, with optional filters.
@@ -134,6 +141,31 @@ public class TicketController {
       @Valid @RequestBody CommentRequest request) {
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(commentService.add(id, request, actor));
+  }
+
+  @GetMapping("/{id}/adjuntos")
+  public List<AttachmentResponse> listAttachments(
+      @Parameter(hidden = true) @AuthenticationPrincipal AuthUser actor,
+      @PathVariable Long id) {
+    return attachmentService.list(id, actor);
+  }
+
+  @PostMapping("/{id}/adjuntos")
+  public ResponseEntity<AttachmentResponse> addAttachment(
+      @Parameter(hidden = true) @AuthenticationPrincipal AuthUser actor,
+      @PathVariable Long id,
+      @Valid @RequestBody AttachmentRequest request) {
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(attachmentService.add(id, request, actor));
+  }
+
+  @DeleteMapping("/{id}/adjuntos/{adjuntoId}")
+  public ResponseEntity<Void> deleteAttachment(
+      @Parameter(hidden = true) @AuthenticationPrincipal AuthUser actor,
+      @PathVariable Long id,
+      @PathVariable Long adjuntoId) {
+    attachmentService.delete(id, adjuntoId, actor);
+    return ResponseEntity.noContent().build();
   }
 
   // Status-change history of the ticket.

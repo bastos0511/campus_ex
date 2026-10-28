@@ -26,15 +26,12 @@ Demo accounts (development seed data, passwords never published):
 `usuario1@technova.com` (USER). Configure local passwords with
 environment variables (see the root README, "Local credentials").
 
-## Environment variables (required)
+## Configuration
 
-| Variable | Purpose |
-|---|---|
-| `DB_USER`, `DB_PASSWORD` | PostgreSQL user and password |
-| `JWT_SECRET` | Token signing secret (32+ characters) |
+Development project: every value (database, JWT secret, ADMIN/TECHNICIAN
+accounts) is fixed in `src/main/resources/application.properties`. Only
+`DB_URL` is overridden, by `docker-compose.yml`, to reach the `postgres` host.
 
-Optional: `DB_URL`, `JWT_EXPIRATION_MINUTES` (60), `CORS_ALLOWED_ORIGINS`,
-`ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME`, `TECH_EMAIL`, `TECH_PASSWORD`, `TECH_NAME`.
 `../database/schema.sql` is the single source of truth for the schema; Hibernate only
 validates it on startup (`ddl-auto=validate`) and never modifies it.
 ADMIN/TECHNICIAN accounts are only created when their email and password

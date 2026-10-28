@@ -1,3 +1,6 @@
+# CampusDesk completo: PostgreSQL + backend (Spring Boot) + frontend (nginx).
+#   docker compose up -d --build
+# Frontend: http://localhost:5500 · API: http://localhost:8080/api · Swagger: http://localhost:8080/swagger-ui.html
 services:
   postgres:
     image: postgres:16-alpine
@@ -21,6 +24,31 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  backend:
+    build: ./backend
+    container_name: campusdesk-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # El resto de la configuración está fija en application.properties.
+      DB_URL: jdbc:postgresql://postgres:5432/technova_db
+    ports:
+      - "8080:8080"
+
+  frontend:
+    image: nginx:1.27-alpine
+    container_name: campusdesk-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    # Puerto 5500: es el origen permitido por CORS en el backend.
+    ports:
+      - "5500:80"
 
 volumes:
   campusdesk_pgdata:

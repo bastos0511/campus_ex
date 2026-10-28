@@ -27,6 +27,23 @@ change history, roles and JWT authentication.
 - Maven **no** necesita instalación global: el proyecto incluye Maven Wrapper (`backend/mvnw.cmd`)
 - Un servidor estático para el frontend (p. ej. `python -m http.server 5500` o Live Server de VS Code)
 
+## Despliegue con Docker (recomendado)
+
+Solo necesitas Docker. Desde la raíz del repositorio clonado:
+
+```bash
+docker compose up -d --build
+```
+
+Levanta PostgreSQL (con `schema.sql` y `seed.sql` la primera vez), el backend
+y el frontend:
+
+- Frontend: http://localhost:5500
+- API: http://localhost:8080/api · Swagger: http://localhost:8080/swagger-ui.html
+- Entra con `admin@campusdesk.com` / `Admin96c2b7d5!` (ver "Configuración").
+
+Para borrar también los datos: `docker compose down -v`.
+
 ## Installation and PostgreSQL
 
 `database/schema.sql` es la única fuente de verdad: crea tablas,
@@ -54,39 +71,26 @@ datos demo si la tabla de usuarios está vacía; nunca borra ni modifica nada).
 > ningún endpoint ni proceso que borre la base de datos: el reseteo
 > destructivo quedó eliminado a propósito.
 
-## Environment variables (backend)
+## Configuración
 
-| Variable | Required | Description |
-|---|---|---|
-| `DB_USER`, `DB_PASSWORD` | Yes | PostgreSQL credentials |
-| `JWT_SECRET` | Yes | JWT secret (minimum 32 characters, no default: boot fails without it) |
-| `DB_URL` | No | Defaults to `jdbc:postgresql://localhost:5432/technova_db` |
-| `JWT_EXPIRATION_MINUTES` | No | Token lifetime (60) |
-| `CORS_ALLOWED_ORIGINS` | No | Frontend origins (ports 5500) |
-| `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME` | No | Creates the ADMIN on startup |
-| `TECH_EMAIL`, `TECH_PASSWORD`, `TECH_NAME` | No | Creates a TECHNICIAN on startup |
-| `AUTO_CLOSE_DAYS` | No | Días en `RESUELTA` antes del cierre automático (7; `0` lo desactiva) |
-| `AUTO_CLOSE_CRON` | No | Cuándo corre el cierre automático (`0 0 3 * * *` = 3 a. m. diario) |
+Proyecto de desarrollo (no va a producción): toda la configuración está fija
+en `backend/src/main/resources/application.properties`, sin variables de
+entorno obligatorias.
 
-## Local credentials
-
-Never commit real passwords or secrets. For development, export the
-variables above in your shell or IDE, or copy the template and edit it
-locally (the copy is ignored by git, see `.gitignore`):
-
-```bash
-cp backend/src/main/resources/application-local.properties.example \
-   backend/src/main/resources/application-local.properties
-# replace every CAMBIAR_LOCALMENTE value
-```
+| Valor | Configurado |
+|---|---|
+| Base de datos | `technova_db`, usuario `campusdesk_app`, clave `campusdesk_dev` (igual que `docker-compose.yml`) |
+| `DB_URL` | `jdbc:postgresql://localhost:5432/technova_db` (Docker lo cambia al host `postgres`) |
+| JWT | Secreto fijo de 64 caracteres, tokens de 60 minutos |
+| ADMIN creado al arrancar | `admin@campusdesk.com` / `Admin96c2b7d5!` |
+| TECHNICIAN creado al arrancar | `tecnico@campusdesk.com` / `Tecnico3f8a1c6e!` |
+| Cierre automático | Tickets `RESUELTA` tras 7 días, a las 3 a. m. |
 
 ## Running
 
-Backend (configura `DB_USER`, `DB_PASSWORD` y un `JWT_SECRET` de 32+ caracteres,
-ver `backend/src/main/resources/application-local.properties.example`):
+Backend (con PostgreSQL ya levantado, p. ej. `docker compose up -d postgres`):
 
-Desde IntelliJ IDEA: abre la carpeta `backend/` como proyecto Maven,
-configura las variables de entorno en la configuración Run y ejecuta
+Desde IntelliJ IDEA: abre la carpeta `backend/` como proyecto Maven y ejecuta
 la clase `com.technova.campusdesk.CampusDeskApplication` (contiene
 `@SpringBootApplication`).
 
@@ -98,7 +102,7 @@ mvnw.cmd spring-boot:run
 ```
 
 Al arrancar, el backend valida su entorno y falla rápido con un mensaje
-claro si falta `JWT_SECRET`, si PostgreSQL no es alcanzable o si el
+claro si PostgreSQL no es alcanzable o si el
 esquema está incompleto. Diagnóstico sin login:
 
 ```bash
